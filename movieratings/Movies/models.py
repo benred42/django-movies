@@ -36,7 +36,7 @@ class Rater(models.Model):
         return self.rating_set.count()
 
     def __str__(self):
-        return self.raterID
+        return str(self.raterID)
 
 class Movie(models.Model):
     movieID = models.IntegerField()
@@ -47,7 +47,7 @@ class Movie(models.Model):
         return self.rating_set.count()
 
     def __str__(self):
-        return self.movieID
+        return str(self.movieID)
 
 
 class Rating(models.Model):
