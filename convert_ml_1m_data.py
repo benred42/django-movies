@@ -52,7 +52,7 @@ with open("data/ml-1m/movies.dat", encoding="windows-1252") as infile:
                        "pk": row[0],
                        "fields": {
                            "title": row[1],
-                           "genres": [genre_dict[genre]-1 for genre in row[2].split("|")]
+                           "genres": [genre_dict[genre]+1 for genre in row[2].split("|")]
                        }})
 
 with open("movieratings/fixtures/movies.json", "w") as outfile:
