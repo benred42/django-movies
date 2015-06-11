@@ -1,0 +1,11 @@
+{% extends "updates/base.html" %}
+
+{% block content %}
+    <h1>Top 20 Movies</h1>
+    {% for movie in top_movies[:20] %}
+        <div>
+            <a href="{% url 'movie' movie.id %}">{{ movie.get_average_rating }} -
+                <strong>{{ movie.title }}</strong></a>
+        </div>
+    {% endfor %}
+{% endblock %}

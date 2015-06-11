@@ -1,12 +1,14 @@
 from django.db import models
+from django.db.models import Avg
 
 # Create your models here.
 class Rater(models.Model):
     gender = models.CharField(max_length=1)
     age = models.IntegerField()
     occupation = models.IntegerField()
-    zipcode = models.CharField(max_length=300)
+    zipcode = models.CharField(max_length=10)
 
+    @property
     def occupation_label(self):
         occupations_dict = {0:  "other or not specified",
                             1:  "academic/educator",
@@ -34,43 +36,60 @@ class Rater(models.Model):
     def get_ratings(self):
         return self.rating_set.count()
 
+    @property
     def get_average_rating(self):
-        ratings = self.rating_set.all()
-        all_ratings = [rating.rating for rating in ratings]
-        if all_ratings:
-            return sum(all_ratings) / len(all_ratings)
+        avg_rating = self.rating_set.all().aggregate(Avg('rating'))['rating__avg']
+        if avg_rating is not None:
+            return round(avg_rating, 2)
         else:
-            return "No ratings"
+            return 0.0
 
     def top_unseen(self):
         rated = [rating.movie.title for rating in self.rating_set.all()]
-        top_unrated = [movie for movie in Movie.top_movies() if movie[0] not in rated]
+        top_unrated = [movie for movie in Movie.top_movies() if movie.title not in rated]
         return top_unrated[:10]
 
     def __str__(self):
         return str(self.id)
 
+
+#######################################################################################################################
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+#######################################################################################################################
+
+
 class Movie(models.Model):
-    title = models.CharField(max_length=300)
-    genre = models.CharField(max_length=300)
-    movies = models.Manager()
+    title = models.CharField(max_length=255)
+    genres = models.ManyToManyField(Genre)
 
     def get_ratings(self):
         return self.rating_set.count()
 
     @property
+    def get_genres(self):
+        all_genres = [genre.name for genre in self.genres.all()]
+        return all_genres
+
+    @property
     def get_average_rating(self):
-        ratings = self.rating_set.all()
-        all_ratings = [rating.rating for rating in ratings]
-        if all_ratings:
-            return sum(all_ratings) / len(all_ratings)
+        avg_rating = self.rating_set.all().aggregate(Avg('rating'))['rating__avg']
+        if avg_rating is not None:
+            return round(avg_rating, 2)
         else:
-            return "Not rated"
+            return 0.0
 
     @classmethod
     def top_movies(cls):
-        all_movies = Movie.movies.all()
-        top_movies = sorted([(movie.title, movie.get_average_rating) for movie in all_movies], key=lambda x: x[1],
+        all_movies = Movie.objects.all()
+        top_movies = sorted([movie for movie in all_movies], key=lambda x: x.get_average_rating,
                             reverse=True)
         return top_movies
 
@@ -78,11 +97,13 @@ class Movie(models.Model):
         return self.title
 
 
+#######################################################################################################################
+
+
 class Rating(models.Model):
     rater = models.ForeignKey(Rater)
     movie = models.ForeignKey(Movie)
     rating = models.IntegerField()
-    timestamp = models.IntegerField()
 
     def __str__(self):
         return "User: {}, Movie:{}, Rating:{}".format(self.rater, self.movie, self.rating)
