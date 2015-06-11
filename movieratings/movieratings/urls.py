@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from Movies import views as movie_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^top20/', movie_views.top_20, name="top20"),
+    url(r'^movie/(?P<movie_id>\d+)$', movie_views.show_movie, name="show_movie"),
+    url(r'^rater/(?P<rater_id>\d+)$', movie_views.show_rater, name="show_rater")
 ]

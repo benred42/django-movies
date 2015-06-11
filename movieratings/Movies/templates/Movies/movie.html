@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "Movies/base.html" %}
 
-</body>
-</html>
+{% block content %}
+    <h1>{{ movie.title }}</h1>
+    <h3>Average Rating: {{ movie.get_average_rating }}</h3>
+    {% for rating in ratings %}
+        <div>
+            <div><p>Rating: {{ rating.rating }} || <a href="{% url 'show_rater' rating.rater.id %}">Rater: {{ rating.rater }}</a></p></div>
+
+        </div>
+    {% endfor %}
+{% endblock %}

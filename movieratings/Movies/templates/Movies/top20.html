@@ -1,10 +1,10 @@
-{% extends "updates/base.html" %}
+{% extends "Movies/base.html" %}
 
 {% block content %}
     <h1>Top 20 Movies</h1>
-    {% for movie in top_movies[:20] %}
+    {% for movie in top_movies %}
         <div>
-            <a href="{% url 'movie' movie.id %}">{{ movie.get_average_rating }} -
+            <a href="{% url 'show_movie' movie.id %}">{{ movie.get_average_rating }} -
                 <strong>{{ movie.title }}</strong></a>
         </div>
     {% endfor %}
