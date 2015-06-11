@@ -1,5 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Avg
+from django.db.models import Avg, Count
 
 # Create your models here.
 class Rater(models.Model):
@@ -7,6 +8,7 @@ class Rater(models.Model):
     age = models.IntegerField()
     occupation = models.IntegerField()
     zipcode = models.CharField(max_length=10)
+    user = models.OneToOneField(User, null=True)
 
     @property
     def occupation_label(self):
@@ -45,9 +47,9 @@ class Rater(models.Model):
             return 0.0
 
     def top_unseen(self):
-        rated = [rating.movie.title for rating in self.rating_set.all()]
-        top_unrated = [movie for movie in Movie.top_movies() if movie.title not in rated]
-        return top_unrated[:10]
+        rated = [rating.movie for rating in self.rating_set.all()]
+        top_unrated = [movie for movie in Movie.top_movies() if movie not in rated]
+        return top_unrated[:20]
 
     def __str__(self):
         return str(self.id)
@@ -89,8 +91,13 @@ class Movie(models.Model):
     @classmethod
     def top_movies(cls):
         all_movies = Movie.objects.all()
-        top_movies = sorted([movie for movie in all_movies], key=lambda x: x.get_average_rating,
+        top_movies = sorted([movie for movie in all_movies if movie.get_ratings() > 9],
+                            key=lambda x: x.get_average_rating,
                             reverse=True)
+        # top_movies = Movie.objects.annotate(
+        #     rating_count=Count("Rating"),
+        #     average_rating=Avg("Rating__rating")
+        # )
         return top_movies
 
     def __str__(self):
@@ -108,3 +115,15 @@ class Rating(models.Model):
     def __str__(self):
         return "User: {}, Movie:{}, Rating:{}".format(self.rater, self.movie, self.rating)
 
+
+#######################################################################################################################
+
+
+def make_users():
+    """Creates user objects for existing raters (development only, do not run)"""
+    for rater in Rater.objects.all():
+        user = User.objects.create_user(username="user{}".format(rater.id),
+                                        email="user{}@example.ro".format(rater.id),
+                                        password="batman")
+        rater.user = user
+        rater.save()

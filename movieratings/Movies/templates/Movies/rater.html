@@ -1,18 +1,27 @@
 {% extends "Movies/base.html" %}
 
 {% block content %}
-    <h1>Rater #{{ rater.id }}</h1>
-    <h3>Demographics</h3>
-    <ul>
-        <li>Gender: {{ rater.gender }}</li>
-        <li>Age: {{ rater.age }}</li>
-        <li>Occupation: {{ rater.occupation_label }}</li>
-    </ul>
-    {% for rating in ratings %}
-        <div>
-            <a href="{% url 'show_movie' rating.movie.id %}">{{ rating.movie.title }}</a>
-            <p>Rating: {{ rating.rating }}</p>
-
-        </div>
-    {% endfor %}
+    <div>
+        <h1>Rater #{{ rater.id }}</h1>
+        <h3>Demographics</h3>
+        <ul>
+            <li>Gender: {{ rater.gender }}</li>
+            <li>Age: {{ rater.age }}</li>
+            <li>Occupation: {{ rater.occupation_label }}</li>
+        </ul>
+    </div>
+    <div>
+        <table width="40%">
+            <tr>
+                <th align="left">Movie Rated</th>
+                <th>Rating</th>
+            </tr>
+        {% for rating in ratings %}
+            <tr>
+                <td><a href="{% url 'show_movie' rating.movie.id %}">{{ rating.movie.title }}</a></td>
+                <td>{{ rating.rating }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
 {% endblock %}

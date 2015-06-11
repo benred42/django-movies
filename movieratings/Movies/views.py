@@ -19,8 +19,10 @@ def show_movie(request, movie_id):
 
 def show_rater(request, rater_id):
     rater = Rater.objects.get(pk=rater_id)
+    unseen = rater.top_unseen()[:20]
     ratings = rater.rating_set.all()
     return render(request,
                   "Movies/rater.html",
                   {"rater": rater,
-                   "ratings": ratings})
+                   "ratings": ratings,
+                   "unseen": unseen})
