@@ -3,7 +3,7 @@
 {% block content %}
     <h1>{{ movie.title }}</h1>
     <h3>Average Rating: {{ movie.get_average_rating }}</h3>
-    <p><strong>Genres: </strong>{{ movie.get_genres }}</p>
+    <p><strong>Genres: </strong>{% for genre in movie.get_genres %}{{ genre }} | {% endfor %}</p>
     <a href="{% url 'rate_movie' movie.id %}">Rate this movie</a>
     {% for rating in ratings %}
         <div>

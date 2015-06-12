@@ -142,6 +142,11 @@ class Rating(models.Model):
     def __str__(self):
         return "User: {}, Movie:{}, Rating:{}".format(self.rater, self.movie, self.rating)
 
+    class Meta:
+        unique_together = (
+            ("rater", "movie")
+        )
+
 
 
 #######################################################################################################################

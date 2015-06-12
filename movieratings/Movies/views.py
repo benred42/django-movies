@@ -37,7 +37,8 @@ def new_rating(request, movie_id):
         if rating_form.is_valid():
             rating = rating_form.save(commit=False)
             rating.rater = request.user.rater
-            if rating.validate_unique(exclude="rating"):
+            try:
+                rating.validate_unique(exclude="rating")
                 rating.save()
 
                 messages.add_message(
@@ -46,12 +47,11 @@ def new_rating(request, movie_id):
                     "You have successfully rated {}".format(rating.movie))
 
                 return redirect('rater_profile')
-            else:
+            except:
                 messages.add_message(
                     request,
                     messages.ERROR,
                     "You have already rated {}!".format(rating.movie))
-                # return redirect("rate_movie")
 
     else:
         if movie_id:
