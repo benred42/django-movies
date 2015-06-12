@@ -1,4 +1,4 @@
-{% extends "Movies/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
     <div>
@@ -10,8 +10,11 @@
             <li>Occupation: {{ rater.occupation_label }}</li>
         </ul>
     </div>
+    {% block content2 %}
+    {% endblock %}
     <div>
         <table width="40%">
+         <caption><strong>Movies Rated</strong></caption>
             <tr>
                 <th align="left">Movie Rated</th>
                 <th>Rating</th>

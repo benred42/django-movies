@@ -1,0 +1,21 @@
+{% extends "Movies/rater.html" %}
+
+{% block content2 %}
+    <h3>Welcome {{ rater.user }}</h3>
+    <a href="{% url 'rate_movie' %}">Rate a movie?</a>
+    <div>
+        <table width="40%">
+        <caption><strong>Top Unseen Movies</strong></caption>
+            <tr>
+                <th align="left">Movie</th>
+                <th>Rating</th>
+            </tr>
+        {% for movie in unseen %}
+            <tr>
+                <td><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a></td>
+                <td>{{ movie.get_average_rating }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}

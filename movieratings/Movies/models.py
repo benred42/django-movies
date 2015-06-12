@@ -3,10 +3,37 @@ from django.db import models
 from django.db.models import Avg, Count
 
 # Create your models here.
+
+OCCUPATIONS = (
+    (0,  "other or not specified"),
+    (1, "academic/educator"),
+    (2,  "artist"),
+    (3,  "clerical/admin"),
+    (4,  "college/grad student"),
+    (5,  "customer service"),
+    (6,  "doctor/health care"),
+    (7,  "executive/managerial"),
+    (8,  "farmer"),
+    (9,  "homemaker"),
+    (10,  "K-12 student"),
+    (11,  "lawyer"),
+    (12,  "programmer"),
+    (13,  "retired"),
+    (14,  "sales/marketing"),
+    (15,  "scientist"),
+    (16,  "self-employed"),
+    (17,  "technician/engineer"),
+    (18,  "tradesman/craftsman"),
+    (19,  "unemployed"),
+    (20,  "writer")
+
+)
+
 class Rater(models.Model):
-    gender = models.CharField(max_length=1)
-    age = models.IntegerField()
-    occupation = models.IntegerField()
+    gender = models.CharField(max_length=1, choices=(("M", "Male"), ("F", "Female")))
+    age = models.IntegerField(choices=((1,  "Under 18"), (18,  "18-24"), (25,  "25-34"), (35,  "35-44"),
+                                       (45,  "45-49"), (50,  "50-55"), (56,  "56+")))
+    occupation = models.IntegerField(choices=OCCUPATIONS)
     zipcode = models.CharField(max_length=10)
     user = models.OneToOneField(User, null=True)
 
@@ -49,7 +76,7 @@ class Rater(models.Model):
     def top_unseen(self):
         rated = [rating.movie for rating in self.rating_set.all()]
         top_unrated = [movie for movie in Movie.top_movies() if movie not in rated]
-        return top_unrated[:20]
+        return top_unrated
 
     def __str__(self):
         return str(self.id)
@@ -114,6 +141,7 @@ class Rating(models.Model):
 
     def __str__(self):
         return "User: {}, Movie:{}, Rating:{}".format(self.rater, self.movie, self.rating)
+
 
 
 #######################################################################################################################
