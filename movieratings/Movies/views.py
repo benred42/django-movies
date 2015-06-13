@@ -81,6 +81,19 @@ def edit_rating(request, movie_id):
         rating_form = RatingForm(initial={"movie": Movie.objects.get(pk=movie_id)}, instance=old_rating)
     return render(request, "Movies/edit.html", {'rating_form': rating_form, "movie_id": movie_id})
 
+@login_required
+def delete_rating(request, movie_id):
+    old_rating = Rating.objects.filter(movie=Movie.objects.get(pk=movie_id)).get(rater=request.user.rater)
+    if request.method == "POST":
+        old_rating.delete()
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             "You have successfully deleted your rating.")
+
+        return redirect('rater_profile')
+
+    return render(request, "Movies/delete.html", {"movie_id": movie_id})
+
 
 def rater_profile(request):
         rater = Rater.objects.get(pk=request.user.rater.id)

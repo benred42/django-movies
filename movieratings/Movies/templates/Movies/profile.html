@@ -23,5 +23,6 @@
 {% block content3 %}
     {% if request.user.is_authenticated %}
         <td><a href="{% url 'edit_rating' rating.movie.id %}">Edit</a></td>
+        <td><a href="{% url 'delete_rating' rating.movie.id %}">Delete</a></td>
     {% endif %}
 {% endblock %}

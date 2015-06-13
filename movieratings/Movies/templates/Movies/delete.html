@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Delete Your Rating</h2>
+
+    <form method="POST" action="{% url 'delete_rating' movie_id %}">
+        {% csrf_token %}
+        <!-- Provide a button to click to submit the form. -->
+        <input type="submit" name="submit" value="Delete"/>
+    </form>
+{% endblock %}
