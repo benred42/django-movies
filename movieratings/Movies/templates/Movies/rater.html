@@ -23,6 +23,8 @@
             <tr>
                 <td><a href="{% url 'show_movie' rating.movie.id %}">{{ rating.movie.title }}</a></td>
                 <td>{{ rating.rating }}</td>
+            {% block content3 %}
+            {% endblock %}
             </tr>
         {% endfor %}
     </table>

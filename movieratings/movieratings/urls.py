@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^login/', builtin.login, name="login"),
     url(r'^logout/', builtin.logout_then_login, {"login_url": "login"}, name="logout"),
     url(r'^rate/(?P<movie_id>\d*)?$', movie_views.new_rating, name="rate_movie"),
+    url(r'^rate/edit/(?P<movie_id>\d*)?$', movie_views.edit_rating, name="edit_rating"),
     url(r'^accounts/profile/', movie_views.rater_profile, name="rater_profile"),
 ]
