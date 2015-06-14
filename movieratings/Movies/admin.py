@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Rater, Movie, Rating, Genre
 
 class RaterAdmin(admin.ModelAdmin):
-    list_display = ["id", "gender", "age", "occupation", "occupation_label", "get_ratings", "get_average_rating"]
+    list_display = ["id", "gender", "age", "occupation", "get_occupation_display", "get_ratings", "get_average_rating"]
 
 
 class MovieAdmin(admin.ModelAdmin):

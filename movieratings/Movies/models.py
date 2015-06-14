@@ -5,27 +5,27 @@ from django.db.models import Avg, Count
 # Create your models here.
 
 OCCUPATIONS = (
-    (0,  "other or not specified"),
-    (1, "academic/educator"),
-    (2,  "artist"),
-    (3,  "clerical/admin"),
-    (4,  "college/grad student"),
-    (5,  "customer service"),
-    (6,  "doctor/health care"),
-    (7,  "executive/managerial"),
-    (8,  "farmer"),
-    (9,  "homemaker"),
+    (0,  "Other or not specified"),
+    (1, "Academic/educator"),
+    (2,  "Artist"),
+    (3,  "Clerical/admin"),
+    (4,  "College/grad student"),
+    (5,  "Customer service"),
+    (6,  "Doctor/health care"),
+    (7,  "Executive/managerial"),
+    (8,  "Farmer"),
+    (9,  "Homemaker"),
     (10,  "K-12 student"),
-    (11,  "lawyer"),
-    (12,  "programmer"),
-    (13,  "retired"),
-    (14,  "sales/marketing"),
-    (15,  "scientist"),
-    (16,  "self-employed"),
-    (17,  "technician/engineer"),
-    (18,  "tradesman/craftsman"),
-    (19,  "unemployed"),
-    (20,  "writer")
+    (11,  "Lawyer"),
+    (12,  "Programmer"),
+    (13,  "Retired"),
+    (14,  "Sales/marketing"),
+    (15,  "Scientist"),
+    (16,  "Self-employed"),
+    (17,  "Technician/engineer"),
+    (18,  "Tradesman/craftsman"),
+    (19,  "Unemployed"),
+    (20,  "Writer")
 
 )
 
@@ -36,31 +36,6 @@ class Rater(models.Model):
     occupation = models.IntegerField(choices=OCCUPATIONS)
     zipcode = models.CharField(max_length=10)
     user = models.OneToOneField(User, null=True)
-
-    @property
-    def occupation_label(self):
-        occupations_dict = {0:  "other or not specified",
-                            1:  "academic/educator",
-                            2:  "artist",
-                            3:  "clerical/admin",
-                            4:  "college/grad student",
-                            5:  "customer service",
-                            6:  "doctor/health care",
-                            7:  "executive/managerial",
-                            8:  "farmer",
-                            9:  "homemaker",
-                            10:  "K-12 student",
-                            11:  "lawyer",
-                            12:  "programmer",
-                            13:  "retired",
-                            14:  "sales/marketing",
-                            15:  "scientist",
-                            16:  "self-employed",
-                            17:  "technician/engineer",
-                            18:  "tradesman/craftsman",
-                            19:  "unemployed",
-                            20:  "writer"}
-        return occupations_dict[self.occupation]
 
     def get_ratings(self):
         return self.rating_set.count()
@@ -117,15 +92,12 @@ class Movie(models.Model):
 
     @classmethod
     def top_movies(cls):
-        all_movies = Movie.objects.all()
-        top_movies = sorted([movie for movie in all_movies if movie.get_ratings() > 9],
-                            key=lambda x: x.get_average_rating,
-                            reverse=True)
-        # top_movies = Movie.objects.annotate(
-        #     rating_count=Count("Rating"),
-        #     average_rating=Avg("Rating__rating")
-        # )
-        return top_movies
+        # all_movies = Movie.objects.all()
+        # top_movies = sorted([movie for movie in all_movies if movie.get_ratings() > 9],
+        #                     key=lambda x: x.get_average_rating,
+        #                     reverse=True)
+        top_movies = Movie.objects.annotate(Avg("rating__rating"), num=Count("rating")).filter(num__gt=9)
+        return top_movies.order_by("-rating__rating__avg")
 
     def __str__(self):
         return self.title

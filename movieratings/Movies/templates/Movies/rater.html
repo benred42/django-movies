@@ -5,9 +5,9 @@
         <h1>Rater #{{ rater.id }}</h1>
         <h3>Demographics</h3>
         <ul>
-            <li>Gender: {{ rater.gender }}</li>
-            <li>Age: {{ rater.age }}</li>
-            <li>Occupation: {{ rater.occupation_label }}</li>
+            <li>Gender: {{ rater.get_gender_display }}</li>
+            <li>Age: {{ rater.get_age_display }}</li>
+            <li>Occupation: {{ rater.get_occupation_display }}</li>
         </ul>
     </div>
     {% block content2 %}
