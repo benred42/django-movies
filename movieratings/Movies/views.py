@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from Movies.forms import RatingForm
@@ -47,7 +48,7 @@ def new_rating(request, movie_id):
                     "You have successfully rated {}".format(rating.movie))
 
                 return redirect('rater_profile')
-            except:
+            except ValidationError:
                 messages.add_message(
                     request,
                     messages.ERROR,
