@@ -8,12 +8,12 @@
         <table border="1" style="width:60%">
             <tr>
                 <th>Movie</th>
-                <th>Rating</th>
+                <th>Number of Ratings</th>
             </tr>
             {% for movie in top_movies %}
             <tr>
                 <td><a href="{% url 'show_movie' movie.id %}"><strong>{{ movie.title }}</strong></a></td>
-                <td>{{ movie.get_average_rating }}</td>
+                <td>{{ movie.get_ratings }}</td>
             </tr>
             {% endfor %}
         </table>

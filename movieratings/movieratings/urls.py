@@ -22,6 +22,7 @@ from django.contrib.auth import views as builtin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^top20/', movie_views.top_20, name="top20"),
+    url(r'^top20/number/$', movie_views.top_20_by_number, name="top20_by_number"),
     url(r'^genre/$', movie_views.show_all_genres, name="show_all_genres"),
     url(r'^movie/(?P<movie_id>\d+)$', movie_views.show_movie, name="show_movie"),
     url(r'^rater/(?P<rater_id>\d+)$', movie_views.show_rater, name="show_rater"),
