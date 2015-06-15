@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, Count
 
@@ -104,12 +105,18 @@ class Movie(models.Model):
 
 
 #######################################################################################################################
+def validate_rating_in_range(value):
+    if 1 > value > 5:
+        raise ValidationError("Rating must be between 1 and 5")
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class Rating(models.Model):
     rater = models.ForeignKey(Rater)
     movie = models.ForeignKey(Movie)
-    rating = models.IntegerField()
+    rating = models.IntegerField(validators=[validate_rating_in_range])
+    timestamp = models.DateTimeField(null=True)
+    review = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return "User: {}, Movie:{}, Rating:{}".format(self.rater, self.movie, self.rating)

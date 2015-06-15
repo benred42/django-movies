@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div align="center">
+        <h1>Top 20 Movies</h1>
+    </div>
+    <div align="center">
+        <table border="1" style="width:60%">
+            <tr>
+                <th>Movie</th>
+                <th>Rating</th>
+            </tr>
+            {% for movie in top_movies %}
+            <tr>
+                <td><a href="{% url 'show_movie' movie.id %}"><strong>{{ movie.title }}</strong></a></td>
+                <td>{{ movie.get_average_rating }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
