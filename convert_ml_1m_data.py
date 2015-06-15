@@ -1,5 +1,6 @@
 import csv
 import json
+from datetime import date
 
 print("Converting users...")
 users = []
@@ -70,7 +71,8 @@ with open("data/ml-1m/ratings.dat") as infile:
                         "fields": {
                             "rater": row[0],
                             "movie": row[1],
-                            "rating": row[2]
+                            "rating": row[2],
+                            "timestamp": date.fromtimestamp(int(row[3])).__str__()
                         }})
 
 with open("movieratings/fixtures/ratings.json", "w") as outfile:
