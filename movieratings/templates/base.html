@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html>
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=1%}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 <head lang="en">
     <meta charset="UTF-8">
     {% if request.user.is_authenticated %}
@@ -9,8 +18,10 @@
     {% endif %}
     <div>
         <span>Navigation: </span>
+        {% if request.user.is_authenticated %}
         <span><a href="{% url 'rater_profile' %}">Home</a></span>
         <span> | </span>
+        {% endif %}
         <span><a href="{% url 'top20' %}">Top Movies</a></span>
     </div>
     <title>MovieLens Rater</title>
