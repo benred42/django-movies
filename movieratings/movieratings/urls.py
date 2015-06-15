@@ -22,8 +22,10 @@ from django.contrib.auth import views as builtin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^top20/', movie_views.top_20, name="top20"),
+    url(r'^genre/$', movie_views.show_all_genres, name="show_all_genres"),
     url(r'^movie/(?P<movie_id>\d+)$', movie_views.show_movie, name="show_movie"),
     url(r'^rater/(?P<rater_id>\d+)$', movie_views.show_rater, name="show_rater"),
+    url(r'^genre/(?P<genre_id>\d+)$', movie_views.show_genre, name="show_genre"),
     url(r'^register/', user_views.register_rater, name="user_register"),
     url(r'^login/', builtin.login, name="login"),
     url(r'^logout/', builtin.logout_then_login, {"login_url": "login"}, name="logout"),

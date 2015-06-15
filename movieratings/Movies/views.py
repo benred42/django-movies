@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from Movies.forms import RatingForm
-from .models import Movie, Rater, Rating
+from .models import Movie, Rater, Rating, Genre
 
 # Create your views here.
 def top_20(request):
@@ -13,9 +14,24 @@ def top_20(request):
                   {"top_movies": top_movies[:20]})
 
 
+def top_20_by_number(request):
+    top_movies = Movie.objects.annotate(num=Count("rating")).order_by("-rating__count")
+    return render(request,
+                  "Movies/top20.html",
+                  {"top_movies": top_movies[:20]})
+
+
+def show_all_genres(request):
+    genres = Genre.objects.all().order_by("name")
+    return render(request,
+                  "Movies/genres.html",
+                  {"genres": genres})
+
+
+
 def show_movie(request, movie_id):
-    movie = Movie.objects.get(pk=movie_id)
-    ratings = movie.rating_set.all()
+    movie = get_object_or_404(Movie, pk=movie_id)
+    ratings = Rating.objects.filter(movie=get_object_or_404(Movie, pk=movie_id))
     return render(request,
                   "Movies/movie.html",
                   {"movie": movie,
@@ -23,12 +39,22 @@ def show_movie(request, movie_id):
 
 
 def show_rater(request, rater_id):
-    rater = Rater.objects.get(pk=rater_id)
-    ratings = rater.rating_set.all()
+    rater = get_object_or_404(Rater, pk=rater_id)
+    ratings = Rating.objects.filter(rater=get_object_or_404(Rater, pk=rater_id))
     return render(request,
                   "Movies/rater.html",
                   {"rater": rater,
                    "ratings": ratings})
+
+
+def show_genre(request, genre_id):
+    genre = get_object_or_404(Genre, pk=genre_id)
+    movies = sorted(genre.movie_set.all(), key=lambda x: x.get_average_rating, reverse=True)
+    return render(request,
+                  "Movies/genre.html",
+                  {"genre": genre,
+                   "movies": movies})
+
 
 
 @login_required
@@ -63,7 +89,7 @@ def new_rating(request, movie_id):
 
 @login_required
 def edit_rating(request, movie_id):
-    old_rating = Rating.objects.filter(movie=Movie.objects.get(pk=movie_id)).get(rater=request.user.rater)
+    old_rating = Rating.objects.filter(movie=get_object_or_404(Movie, pk=movie_id)).get(rater=request.user.rater)
     if request.method == "POST":
         rating_form = RatingForm(request.POST, instance=old_rating)
         if rating_form.is_valid():
@@ -84,7 +110,7 @@ def edit_rating(request, movie_id):
 
 @login_required
 def delete_rating(request, movie_id):
-    old_rating = Rating.objects.filter(movie=Movie.objects.get(pk=movie_id)).get(rater=request.user.rater)
+    old_rating = Rating.objects.filter(movie=get_object_or_404(Movie, pk=movie_id)).get(rater=request.user.rater)
     if request.method == "POST":
         old_rating.delete()
         messages.add_message(request,
@@ -97,7 +123,7 @@ def delete_rating(request, movie_id):
 
 
 def rater_profile(request):
-        rater = Rater.objects.get(pk=request.user.rater.id)
+        rater = get_object_or_404(Rater, pk=request.user.rater.id)
         unseen = rater.top_unseen()[:20]
         ratings = rater.rating_set.all()
         return render(request,

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ genre.name }}</h1>
+    {% for movie in movies %}
+        <div>
+            <div>
+                <p><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a> | {{ movie.get_average_rating }}</p>
+            </div>
+
+        </div>
+    {% endfor %}
+{% endblock %}
