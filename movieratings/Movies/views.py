@@ -15,7 +15,7 @@ def top_20(request):
 
 
 def top_20_by_number(request):
-    top_movies = Movie.objects.annotate(num=Count("rating")).order_by("-rating__count")
+    top_movies = Movie.objects.annotate(num=Count("rating")).order_by("-num")
     return render(request,
                   "Movies/top20_num_ratings.html",
                   {"top_movies": top_movies[:20]})
