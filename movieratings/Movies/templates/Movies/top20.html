@@ -5,20 +5,25 @@
 {% block content %}
     <div align="center">
         <h1>Top 20 Movies</h1>
+
     </div>
-    <div align="center">
-        <table border="1" style="width:60%">
+    <div class="container" align="center">
+        <div class="btn-group" role="group" aria-label="...">
+            <a type="button" class="btn btn-default" href="{% url 'top20' %}">Rank by Average Rating</a>
+            <a type="button" class="btn btn-default" href="{% url 'top20_by_number' %}">Rank by Number of Ratings</a>
+        </div>
+        <table class="table table-bordered table-responsive">
             <tr>
-                <th>Movie</th>
+                <th class="col-md-10">Movie</th>
                 <th>Rating</th>
             </tr>
             {% for movie in top_movies %}
-            <tr>
-                <td><a href="{% url 'show_movie' movie.id %}"><strong>{{ movie.title }}</strong></a></td>
-                <td>{{ movie.get_average_rating }}</td>
-            </tr>
+                <tr>
+                    <td><a href="{% url 'show_movie' movie.id %}"><strong>{{ movie.title }}</strong></a></td>
+                    <td>{{ movie.avg_rating|floatformat:2 }}</td>
+                </tr>
             {% endfor %}
         </table>
-        <a href="{% url 'top20_by_number' %}">Rank by Number of Ratings</a>
+
     </div>
 {% endblock %}

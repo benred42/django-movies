@@ -6,7 +6,7 @@ class RaterAdmin(admin.ModelAdmin):
 
 
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "get_genres", "get_ratings", "get_average_rating"]
+    list_display = ["id", "title", "get_genres"]
 
 
 class RatingAdmin(admin.ModelAdmin):

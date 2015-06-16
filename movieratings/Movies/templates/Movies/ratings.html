@@ -1,0 +1,26 @@
+<div>
+    <table class="table">
+        <caption><strong>Movies Rated</strong></caption>
+        <tr>
+            <th class="col-md-7">Movie Rated</th>
+            <th>Rating</th>
+            <th>Review</th>
+            {% if request.user.is_authenticated %}
+                <th></th>
+            {% endif %}
+        </tr>
+        {% for rating in ratings %}
+            <tr>
+                <td><a href="{% url 'show_movie' rating.movie.id %}">{{ rating.movie.title }}</a></td>
+                <td>{{ rating.rating }}</td>
+                {% if rating.review %}
+                    <td><a href="{% url 'show_review' rating.id %}">Review</a></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                {% block content3 %}
+                {% endblock %}
+            </tr>
+        {% endfor %}
+    </table>
+</div>

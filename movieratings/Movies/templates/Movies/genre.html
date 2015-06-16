@@ -4,8 +4,8 @@
     <h1>{{ genre.name }}</h1>
     {% for movie in movies %}
         <div>
-            <div>
-                <p><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a> | {{ movie.get_average_rating }}</p>
+            <div class="{% cycle "odd" "even" %}-row">
+                <p><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a> | {{ movie.avg_rating|floatformat:2 }}</p>
             </div>
 
         </div>

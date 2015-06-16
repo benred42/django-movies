@@ -2,27 +2,29 @@
 
 {% block content2 %}
     <h3>Welcome {{ rater.user }}</h3>
-    <a href="{% url 'rate_movie' %}">Rate a movie?</a>
+    <a type="button" class="btn btn-default" href="{% url 'rate_movie' %}">Rate a movie?</a>
+    {% include "Movies/ratings.html" %}
     <div>
-        <table width="40%">
-        <caption><strong>Top Unseen Movies</strong></caption>
+        <table class="table">
+            <caption><strong>Top Unseen Movies</strong></caption>
             <tr>
-                <th align="left">Movie</th>
+                <th class="col-md-7">Movie</th>
                 <th>Rating</th>
             </tr>
-        {% for movie in unseen %}
-            <tr>
-                <td><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a></td>
-                <td>{{ movie.get_average_rating }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+            {% for movie in unseen %}
+                <tr>
+                    <td><a href="{% url 'show_movie' movie.id %}">{{ movie.title }}</a></td>
+                    <td>{{ movie.avg_rating|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 {% endblock %}
 
 {% block content3 %}
     {% if request.user.is_authenticated %}
-        <td><a href="{% url 'edit_rating' rating.movie.id %}">Edit</a></td>
-        <td><a href="{% url 'delete_rating' rating.movie.id %}">Delete</a></td>
+        <td><a href="{% url 'edit_rating' rating.movie.id %}">Edit</a> |
+            <a href="{% url 'delete_rating' rating.movie.id %}">Delete</a></td>
+
     {% endif %}
 {% endblock %}

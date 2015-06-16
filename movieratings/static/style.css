@@ -1,0 +1,26 @@
+.odd-row, .even-row {
+    padding-left: 20px;
+    margin-top: 10px;
+    margin-left: -20px;
+}
+
+.odd-row{
+    background-color: transparent;
+}
+
+.even-row{
+    background: #222222 ;
+    border-radius: 5px;
+}
+
+.table-nonfluid {
+   width: auto !important;
+}
+
+.form-custom-narrow {
+    width: 19%;
+}
+
+div {
+    word-wrap: break-word;
+}

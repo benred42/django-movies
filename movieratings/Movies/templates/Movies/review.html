@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Review of {{ rating.movie }}</h1>
+    <div>
+        <p>{{ reviewer }} said:</p>
+
+        <div class="panel panel-default">
+            <div class="panel-body">{{ rating.review }}</div>
+        </div>
+    </div>
+{% endblock %}

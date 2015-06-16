@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 
 {% block content %}
     <h2>Rate A Movie</h2>
 
     <form method="POST" action="{% url 'rate_movie' movie.id %}">
         {% csrf_token %}
-        {{ rating_form.as_p }}
+        {% bootstrap_form rating_form %}
 
         <!-- Provide a button to click to submit the form. -->
-        <input type="submit" name="submit" value="Rate"/>
+        <input type="submit" name="submit" class="btn btn-default" value="Rate"/>
     </form>
 {% endblock %}

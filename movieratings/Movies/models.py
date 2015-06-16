@@ -75,30 +75,15 @@ class Movie(models.Model):
     title = models.CharField(max_length=255)
     genres = models.ManyToManyField(Genre)
 
-    def get_ratings(self):
-        return self.rating_set.count()
-
     @property
     def get_genres(self):
         all_genres = [genre.name for genre in self.genres.all()]
         return all_genres
 
-    @property
-    def get_average_rating(self):
-        avg_rating = self.rating_set.all().aggregate(Avg('rating'))['rating__avg']
-        if avg_rating is not None:
-            return round(avg_rating, 2)
-        else:
-            return 0.0
-
     @classmethod
     def top_movies(cls):
-        # all_movies = Movie.objects.all()
-        # top_movies = sorted([movie for movie in all_movies if movie.get_ratings() > 9],
-        #                     key=lambda x: x.get_average_rating,
-        #                     reverse=True)
-        top_movies = Movie.objects.annotate(Avg("rating__rating"), num=Count("rating")).filter(num__gt=9)
-        return top_movies.order_by("-rating__rating__avg")
+        top_movies = Movie.objects.annotate(avg_rating=Avg("rating__rating"), num=Count("rating")).filter(num__gt=9)
+        return top_movies.order_by("-avg_rating")
 
     def __str__(self):
         return self.title

@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^movie/(?P<movie_id>\d+)$', movie_views.show_movie, name="show_movie"),
     url(r'^rater/(?P<rater_id>\d+)$', movie_views.show_rater, name="show_rater"),
     url(r'^genre/(?P<genre_id>\d+)$', movie_views.show_genre, name="show_genre"),
+    url(r'^review/(?P<rating_id>\d+)$', movie_views.show_review, name="show_review"),
     url(r'^register/$', user_views.register_rater, name="user_register"),
     url(r'^login/$', builtin.login, name="login"),
     url(r'^logout/', builtin.logout_then_login, {"login_url": "login"}, name="logout"),
