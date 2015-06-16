@@ -20,7 +20,7 @@ from users import views as user_views
 from django.contrib.auth import views as builtin
 
 urlpatterns = [
-    url(r'^admin/$', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^top20/$', movie_views.top_20, name="top20"),
     url(r'^top20/number/$', movie_views.top_20_by_number, name="top20_by_number"),
     url(r'^genre/$', movie_views.show_all_genres, name="show_all_genres"),
@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^genre/(?P<genre_id>\d+)$', movie_views.show_genre, name="show_genre"),
     url(r'^register/$', user_views.register_rater, name="user_register"),
     url(r'^login/$', builtin.login, name="login"),
-    url(r'^logout/$', builtin.logout_then_login, {"login_url": "login"}, name="logout"),
+    url(r'^logout/', builtin.logout_then_login, {"login_url": "login"}, name="logout"),
     url(r'^rate/(?P<movie_id>\d*)?$', movie_views.new_rating, name="rate_movie"),
     url(r'^rate/edit/(?P<movie_id>\d*)?$', movie_views.edit_rating, name="edit_rating"),
     url(r'^rate/delete/(?P<movie_id>\d*)?$', movie_views.delete_rating, name="delete_rating"),
