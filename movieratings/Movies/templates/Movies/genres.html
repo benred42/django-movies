@@ -2,9 +2,11 @@
 
 {% block content %}
     <h1>Genres</h1>
+    <div>
+    <ul class="list-inline genres">
     {% for genre in genres %}
-        <div>
-            <h3><a href="{% url 'show_genre' genre.id %}">{{ genre.name}}</a></h3>
-        </div>
+            <li><h3><a href="{% url 'show_genre' genre.id %}">{{ genre.name}}</a></h3></li>
     {% endfor %}
+    </ul>
+    </div>
 {% endblock %}

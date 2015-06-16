@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Search Results</h2>
+    {% if results %}
+    {% for result in results %}
+            <div class="{% cycle "odd" "even" %}-row">
+                <p><a href="{% url 'show_movie' result.id %}">{{ result.title }}</a></p>
+            </div>
+    {% endfor %}
+    {% else %}
+        <p>No Results!</p>
+    {% endif %}
+{% endblock %}

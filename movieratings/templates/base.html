@@ -20,10 +20,18 @@
                 {#                <li class="active"><a href="#">Active</a></li>#}
                 {% if request.user.is_authenticated %}
                     <li><a href="{% url 'rater_profile' %}">Home</a></li>
+                    <li><a href="{% url 'rate_movie' %}">Rate a movie?</a></li>
                 {% endif %}
                 <li><a href="{% url 'top20' %}">Top Movies</a></li>
                 <li><a href="{% url 'show_all_genres' %}">Genres</a></li>
             </ul>
+            <form method="post" action="{% url 'search' %}" class="navbar-form navbar-left" role="search">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search Movies">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated %}
                     <p class="navbar-text">Welcome {{ request.user }}</p>

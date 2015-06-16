@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Delete Your Rating</h2>
+    <h2>Delete Your Rating?</h2>
 
     <form method="POST" action="{% url 'delete_rating' movie_id %}">
         {% csrf_token %}

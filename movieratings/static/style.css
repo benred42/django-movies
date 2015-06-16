@@ -21,6 +21,14 @@
     width: 19%;
 }
 
+.form-custom {
+    width: 68%;
+}
+
+.genres {
+    width: 60%;
+}
+
 div {
     word-wrap: break-word;
 }

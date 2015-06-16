@@ -35,4 +35,5 @@ urlpatterns = [
     url(r'^rate/edit/(?P<movie_id>\d*)?$', movie_views.edit_rating, name="edit_rating"),
     url(r'^rate/delete/(?P<movie_id>\d*)?$', movie_views.delete_rating, name="delete_rating"),
     url(r'^accounts/profile/$', movie_views.rater_profile, name="rater_profile"),
+    url(r'^results/$', movie_views.search, name="search"),
 ]

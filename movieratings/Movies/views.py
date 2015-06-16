@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect, get_object_or_404
@@ -31,11 +30,13 @@ def show_all_genres(request):
 
 def show_movie(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
+    avg_rating = movie.rating_set.aggregate(Avg("rating"))['rating__avg']
     ratings = Rating.objects.filter(movie=get_object_or_404(Movie, pk=movie_id)).select_related()
     return render(request,
                   "Movies/movie.html",
                   {"movie": movie,
-                   "ratings": ratings})
+                   "ratings": ratings,
+                   "avg_rating": avg_rating})
 
 
 def show_rater(request, rater_id):
@@ -142,3 +143,17 @@ def rater_profile(request):
                   {"rater": rater,
                    "ratings": ratings,
                    "unseen": unseen})
+
+
+def search(request):
+    if request.method == "POST":
+        search_input = request.POST.get('search')
+        results = Movie.objects.all()
+        if search:
+            results = results.filter(title__icontains=search_input)
+            return render(request,
+                          'Movies/search.html',
+                          {'results': results})
+    return render(request,
+                  'Movies/search.html',
+                  {'results': None})
