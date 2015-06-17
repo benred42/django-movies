@@ -6,34 +6,35 @@ from django.db.models import Avg, Count
 # Create your models here.
 
 OCCUPATIONS = (
-    (0,  "Other or not specified"),
+    (0, "Other or not specified"),
     (1, "Academic/educator"),
-    (2,  "Artist"),
-    (3,  "Clerical/admin"),
-    (4,  "College/grad student"),
-    (5,  "Customer service"),
-    (6,  "Doctor/health care"),
-    (7,  "Executive/managerial"),
-    (8,  "Farmer"),
-    (9,  "Homemaker"),
-    (10,  "K-12 student"),
-    (11,  "Lawyer"),
-    (12,  "Programmer"),
-    (13,  "Retired"),
-    (14,  "Sales/marketing"),
-    (15,  "Scientist"),
-    (16,  "Self-employed"),
-    (17,  "Technician/engineer"),
-    (18,  "Tradesman/craftsman"),
-    (19,  "Unemployed"),
-    (20,  "Writer")
+    (2, "Artist"),
+    (3, "Clerical/admin"),
+    (4, "College/grad student"),
+    (5, "Customer service"),
+    (6, "Doctor/health care"),
+    (7, "Executive/managerial"),
+    (8, "Farmer"),
+    (9, "Homemaker"),
+    (10, "K-12 student"),
+    (11, "Lawyer"),
+    (12, "Programmer"),
+    (13, "Retired"),
+    (14, "Sales/marketing"),
+    (15, "Scientist"),
+    (16, "Self-employed"),
+    (17, "Technician/engineer"),
+    (18, "Tradesman/craftsman"),
+    (19, "Unemployed"),
+    (20, "Writer")
 
 )
 
+
 class Rater(models.Model):
     gender = models.CharField(max_length=1, choices=(("M", "Male"), ("F", "Female")))
-    age = models.IntegerField(choices=((1,  "Under 18"), (18,  "18-24"), (25,  "25-34"), (35,  "35-44"),
-                                       (45,  "45-49"), (50,  "50-55"), (56,  "56+")))
+    age = models.IntegerField(choices=((1, "Under 18"), (18, "18-24"), (25, "25-34"), (35, "35-44"),
+                                       (45, "45-49"), (50, "50-55"), (56, "56+")))
     occupation = models.IntegerField(choices=OCCUPATIONS)
     zipcode = models.CharField(max_length=10)
     user = models.OneToOneField(User, null=True)
@@ -50,8 +51,11 @@ class Rater(models.Model):
             return 0.0
 
     def top_unseen(self):
-        rated = [rating.movie for rating in self.rating_set.all()]
-        top_unrated = [movie for movie in Movie.top_movies() if movie not in rated]
+        top_unrated = Movie.objects.exclude(rating__in=self.rating_set.all()).annotate(avg_rating=Avg("rating__rating"),
+            num=Count("rating")).filter(
+            num__gt=9).order_by("-avg_rating")
+        # rated = [rating.movie for rating in self.rating_set.all()]
+        # top_unrated = [movie for movie in Movie.top_movies() if movie not in rated]
         return top_unrated
 
     def __str__(self):
@@ -94,6 +98,7 @@ def validate_rating_in_range(value):
     if not 1 <= int(value) <= 5:
         raise ValidationError("Rating must be between 1 and 5")
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class Rating(models.Model):
@@ -110,7 +115,6 @@ class Rating(models.Model):
         unique_together = (
             ("rater", "movie")
         )
-
 
 
 #######################################################################################################################

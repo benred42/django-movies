@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load bootstrap3 %}
 {% block content %}
     <h1>{{ genre.name }}</h1>
     {% for movie in movies %}
@@ -10,4 +10,5 @@
 
         </div>
     {% endfor %}
+    {% bootstrap_pagination page_obj %}
 {% endblock %}

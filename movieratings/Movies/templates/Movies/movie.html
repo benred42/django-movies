@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load bootstrap3 %}
 {% block content %}
     <h1>{{ movie.title }}</h1>
     <h3>Average Rating: {{ avg_rating|floatformat:2 }}</h3>
@@ -8,14 +8,16 @@
     {% for rating in ratings %}
         <div>
             <div class="{% cycle "odd" "even" %}-row">
-                <p>Rating: {{ rating.rating }} || <a href="{% url 'show_rater' rating.rater.id %}">Rater: {{ rating.rater }}</a></p>
+                <p>Rating: {{ rating.rating }} || <a
+                        href="{% url 'show_rater' rating.rater.id %}">Rater: {{ rating.rater }}</a></p>
                 {% if rating.review %}
-                <p><a href="{% url 'show_review' rating.id %}">See Review</a></p>
-                    {% else %}
+                    <p><a href="{% url 'show_review' rating.id %}">See Review</a></p>
+                {% else %}
                     <p>No Review</p>
                 {% endif %}
             </div>
 
         </div>
     {% endfor %}
+    {% bootstrap_pagination page_obj %}
 {% endblock %}
