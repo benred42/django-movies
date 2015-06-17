@@ -131,6 +131,7 @@ BOOTSTRAP3 = {
 
     # The complete URL to the Bootstrap CSS file (None means no theme)
     'theme_url': '/static/bootstrap/css/slate/bootstrap.min.css',
+    # 'theme_url': '/static/bootstrap/css/united/bootstrap.min.css',
 
     # Include jQuery with Bootstrap JavaScript (affects django-bootstrap3 template tags)
     'include_jquery': True,
