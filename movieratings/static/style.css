@@ -4,11 +4,11 @@
     margin-left: -20px;
 }
 
-.odd-row{
+.even-row{
     background-color: transparent;
 }
 
-.even-row{
+.odd-row{
     background: #222222 ;
     border-radius: 5px;
 }
