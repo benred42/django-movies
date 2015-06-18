@@ -2,9 +2,13 @@
 {% load bootstrap3 %}
 {% block content %}
     <h1>{{ movie.title }}</h1>
-    <h3>Average Rating: {{ avg_rating|floatformat:2 }}</h3>
     <p><strong>Genres: </strong>{% for genre in movie.get_genres %}{{ genre }} | {% endfor %}</p>
-    <a type="button" class="btn btn-default" href="{% url 'rate_movie' movie.id %}">Rate this movie</a>
+    <h3>Average Rating: {{ avg_rating|floatformat:2 }}</h3>
+    <div>
+        <img src="{% url "movie_chart" movie.id %}">
+    </div>
+    {#    <p><a href="{% url 'movie_chart' movie.id %}">Average Rating over Time</a></p>#}
+    <a type="button" class="btn btn-default" href="{% url 'rate_movie' movie.idrat %}">Rate this movie</a>
     {% for rating in ratings %}
         <div>
             <div class="{% cycle "odd" "even" %}-row">

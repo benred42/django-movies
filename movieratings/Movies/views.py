@@ -1,13 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Avg
+from django.forms import model_to_dict
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from Movies.forms import RatingForm
-from django.views.generic import ListView, TemplateView
+from django.utils.decorators import method_decorator
+from django.views.generic import View, ListView, TemplateView, UpdateView
 from .models import Movie, Rater, Rating, Genre
 
 # Create your views here.
+class LoginRequiredMixin(object):
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
 class Top20ListView(ListView):
     model = Movie
     paginate_by = 20
@@ -121,6 +130,51 @@ class ShowReview(TemplateView):
         return context
 
 
+class NewRating(LoginRequiredMixin, View):
+    def get(self, request, movie_id):
+        if movie_id:
+            rating_form = RatingForm(initial={"movie": Movie.objects.get(pk=movie_id)})
+        else:
+            rating_form = RatingForm()
+        return render(request, "Movies/rate.html", {'rating_form': rating_form})
+
+    def post(self, request, movie_id):
+        rating_form = RatingForm(request.POST)
+        if rating_form.is_valid():
+            rating = rating_form.save(commit=False)
+            rating.rater = request.user.rater
+            try:
+                rating.validate_unique(exclude="rating")
+                rating.save()
+
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "You have successfully rated {}".format(rating.movie))
+
+                return redirect('rater_profile')
+            except ValidationError:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "You have already rated {}!".format(rating.movie))
+        return render(request, "Movies/rate.html", {'rating_form': rating_form})
+
+
+class Search(View):
+    def post(self, request):
+        if request.method == "POST":
+            search_input = request.POST.get('search')
+            results = Movie.objects.all()
+            if search:
+                results = results.filter(title__icontains=search_input)
+                return render(request,
+                              'Movies/search.html',
+                              {'results': results})
+        return render(request,
+                      'Movies/search.html',
+                      {'results': None})
+
 
 # def top_20(request):
 #     top_movies = Movie.top_movies()[:20]
@@ -196,36 +250,60 @@ class ShowReview(TemplateView):
 #                   "Movies/review.html",
 #                   {"rating": rating,
 #                    "reviewer": reviewer})
-
-
-@login_required
-def new_rating(request, movie_id):
+#
+#
+# @login_required
+# def new_rating(request, movie_id):
+#     if request.method == "POST":
+#         rating_form = RatingForm(request.POST)
+#         if rating_form.is_valid():
+#             rating = rating_form.save(commit=False)
+#             rating.rater = request.user.rater
+#             try:
+#                 rating.validate_unique(exclude="rating")
+#                 rating.save()
+#
+#                 messages.add_message(
+#                     request,
+#                     messages.SUCCESS,
+#                     "You have successfully rated {}".format(rating.movie))
+#
+#                 return redirect('rater_profile')
+#             except ValidationError:
+#                 messages.add_message(
+#                     request,
+#                     messages.ERROR,
+#                     "You have already rated {}!".format(rating.movie))
+#     else:
+#         if movie_id:
+#             rating_form = RatingForm(initial={"movie": Movie.objects.get(pk=movie_id)})
+#         else:
+#             rating_form = RatingForm()
+#     return render(request, "Movies/rate.html", {'rating_form': rating_form})
+#
+#
+def search(request):
     if request.method == "POST":
-        rating_form = RatingForm(request.POST)
-        if rating_form.is_valid():
-            rating = rating_form.save(commit=False)
-            rating.rater = request.user.rater
-            try:
-                rating.validate_unique(exclude="rating")
-                rating.save()
+        search_input = request.POST.get('search')
+        results = Movie.objects.all()
+        if search:
+            results = results.filter(title__icontains=search_input)
+            return render(request,
+                          'Movies/search.html',
+                          {'results': results})
+    return render(request,
+                  'Movies/search.html',
+                  {'results': None})
 
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    "You have successfully rated {}".format(rating.movie))
 
-                return redirect('rater_profile')
-            except ValidationError:
-                messages.add_message(
-                    request,
-                    messages.ERROR,
-                    "You have already rated {}!".format(rating.movie))
-    else:
-        if movie_id:
-            rating_form = RatingForm(initial={"movie": Movie.objects.get(pk=movie_id)})
-        else:
-            rating_form = RatingForm()
-    return render(request, "Movies/rate.html", {'rating_form': rating_form})
+class EditRating(LoginRequiredMixin, UpdateView):
+    model = Rating
+    form_class = RatingForm
+    template_name = "Movies/edit.html"
+
+    def get_queryset(self):
+        movie_id = self.kwargs["pk"]
+        return Rating.objects.filter(movie=get_object_or_404(Movie, pk=movie_id)).filter(rater=self.request.user.rater)
 
 
 @login_required
@@ -264,15 +342,30 @@ def delete_rating(request, movie_id):
     return render(request, "Movies/delete.html", {"movie_id": movie_id})
 
 
-def search(request):
-    if request.method == "POST":
-        search_input = request.POST.get('search')
-        results = Movie.objects.all()
-        if search:
-            results = results.filter(title__icontains=search_input)
-            return render(request,
-                          'Movies/search.html',
-                          {'results': results})
-    return render(request,
-                  'Movies/search.html',
-                  {'results': None})
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import matplotlib
+
+matplotlib.style.use('ggplot')
+
+
+def movie_chart(request, movie_id):
+    ratings = Rating.objects.filter(movie__id=movie_id)
+    df = pd.DataFrame(model_to_dict(rating) for rating in ratings)
+    df.index = df['timestamp']
+    counts = df['rating']
+    counts = counts.sort_index()
+    series = pd.expanding_mean(counts).resample('M', how=np.max, fill_method='pad')
+    response = HttpResponse(content_type='image/png')
+
+    fig = plt.figure(figsize=(6, 4), facecolor="#272b30")
+    plt.xticks(color="white")
+    plt.yticks(color="white")
+    series.plot()
+    plt.title("Average Rating over Time", color="white")
+    plt.xlabel("")
+    canvas = FigureCanvas(fig)
+    canvas.print_png(response)
+    return response

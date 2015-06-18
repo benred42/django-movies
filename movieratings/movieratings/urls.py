@@ -31,9 +31,10 @@ urlpatterns = [
     url(r'^register/$', user_views.register_rater, name="user_register"),
     url(r'^login/$', builtin.login, name="login"),
     url(r'^logout/', builtin.logout_then_login, {"login_url": "login"}, name="logout"),
-    url(r'^rate/(?P<movie_id>\d*)?$', movie_views.new_rating, name="rate_movie"),
+    url(r'^rate/(?P<movie_id>\d*)?$', movie_views.NewRating.as_view(), name="rate_movie"),
     url(r'^rate/edit/(?P<movie_id>\d*)?$', movie_views.edit_rating, name="edit_rating"),
     url(r'^rate/delete/(?P<movie_id>\d*)?$', movie_views.delete_rating, name="delete_rating"),
     url(r'^accounts/profile/$', movie_views.ProfileListView.as_view(), name="rater_profile"),
-    url(r'^results/$', movie_views.search, name="search"),
+    url(r'^results/$', movie_views.Search.as_view(), name="search"),
+    url(r'^ratings.png/(?P<movie_id>\d*)?$', movie_views.movie_chart, name="movie_chart"),
 ]
